@@ -1,16 +1,21 @@
-#######################################
+# --------------------------------------------------------
 # Author: James Ma
 # Email stuff here: jamesmawm@gmail.com
-#######################################
+#
+# Developed and updated by Joseph Loss on 6/19/2019
+# MS Financial Engineering
+# University of Illinois at Urbana-Champaign
+#
+# Inquiries: loss2@illinois.edu
+# --------------------------------------------------------
 
 """ Strategy: Pairs trading through cointegration
+    Uses OLS to determine order of co-integration every self.window_length.
 
-Uses OLS to determine order of co-integration every self.window_length.
-Pair-trading by mean-reversion.
+    Pair-trading by mean-reversion.
 """
 
 import tkinter
-from _tkinter import *
 from Backtester import *
 import pandas as pd
 
@@ -18,10 +23,6 @@ import pandas as pd
 from statsmodels.api import OLS
 import statsmodels.formula.api as smf
 import statsmodels as sm
-
-
-
-import _tkinter as _tk
 import ibHFT
 import threading
 import ibDataTypes

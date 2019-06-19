@@ -1,18 +1,21 @@
-#######################################
+# --------------------------------------------------------
 # Author: James Ma
 # Email stuff here: jamesmawm@gmail.com
-#######################################
+#
+# Developed and updated by Joseph Loss on 6/19/2019
+# MS Financial Engineering
+# University of Illinois at Urbana-Champaign
+#
+# Inquiries: loss2@illinois.edu
+# --------------------------------------------------------
 
-""" Strategy: Limit Orders
-
-Place limit orders just above the bid ask prices.
-Close position when exceed certain thresholds.
+""" Strategy: Limit Orders:
+    1. Place limit orders just above the bid ask prices.
+    2. Close position when exceed certain thresholds.
 """
 
 import tkinter
-
 import ipywidgets
-
 from Backtester import *
 import ibHFT
 

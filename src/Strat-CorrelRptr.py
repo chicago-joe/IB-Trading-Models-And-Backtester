@@ -1,11 +1,16 @@
-#######################################
+# --------------------------------------------------------
 # Author: James Ma
 # Email stuff here: jamesmawm@gmail.com
-#######################################
+#
+# Developed and updated by Joseph Loss on 6/19/2019
+# MS Financial Engineering
+# University of Illinois at Urbana-Champaign
+#
+# Inquiries: loss2@illinois.edu
+# --------------------------------------------------------
 
-""" Strategy: Correlation Reporter
-
-Prints the correlations using Pandas.
+""" Strategy: Correlation Reporter:
+    Prints the correlations using Pandas.
 """
 
 import pandas as pd
