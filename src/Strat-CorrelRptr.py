@@ -24,7 +24,7 @@ class TradingStrategy:
         return
 
     def process_historical_data(self, msg):
-        print msg
+        print(msg)
 
         vwap = msg.WAP
         stock_index = msg.reqId
@@ -44,7 +44,7 @@ class TradingStrategy:
 
     def on_completion(self):
         self.ibhft.set_is_shutdown()
-        print self.pd_last_prices.corr()
+        print(self.pd_last_prices.corr())
 
     def run(self):
         self.ibhft = ibHFT.IbHFT()
@@ -54,5 +54,7 @@ class TradingStrategy:
                                                 , self.interval
                                                 , self.process_historical_data)
 
+
 if __name__ == '__main__':
     TradingStrategy().run()
+

@@ -22,10 +22,10 @@ class TradingStrategy:
         return
 
     def on_position_changed(self):
-        print "on position changed."
+        print("on position changed.")
 
     def on_tick(self, ticks, stock_code, field_type):
-        print "tick"
+        print("tick")
 
     def on_started(self):
         return
@@ -40,11 +40,12 @@ class TradingStrategy:
 
     def run_backtest(self):
         self.ibhft = bt.Backtester()
-        self.ibhft.set_csv_file("ticks 10 mins - Jun 25 2014.csv")
+        self.ibhft.set_csv_file("C:\\Users\\jloss\\PyCharmProjects\\IB-Trading-Models-And-Backtester\\src\\ticks 10 mins - Jun 25 2014.csv")
         self.ibhft.start_data_stream(self.on_started
                                      , self.on_tick
                                      , STOCKS_TO_STREAM
                                      , self.on_position_changed)
+
 
 if __name__ == '__main__':
     # TradingStrategy().run()

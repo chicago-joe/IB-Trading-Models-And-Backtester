@@ -1,19 +1,33 @@
-#######################################
+# ------------------------------------------------------------
 # Author: James Ma
 # Email stuff here: jamesmawm@gmail.com
-#######################################
+#
+#
+# ------------------------------------------------------------
 
-import numpy as np
-from ib.opt import ibConnection, message
-from ib.opt import Connection
 import time
 from time import strftime
+from typing import Dict, Any
+import numpy as np
+
+from ib.opt import ibConnection
+from ib.opt import message
+from ib.ext import EWrapperMsgGenerator,EWrapper,TickType,EReader
+from ib.opt import Connection
+from ib.ext import EWrapper, EWrapperMsgGenerator as msg
+
+from ib.ext import EWrapper
+from ib import *
+
+
 from StockTradable import *
 from StockPosition import *
 from StockOrder import *
 
 
 class IbHFT:
+
+    positions_dict: Dict[Any, Any]
 
     def __init__(self):
         self.is_use_gateway = True
@@ -147,21 +161,21 @@ class IbHFT:
             self.process_error_message(msg)
 
         else:
-            print "logger: " , msg
+            print("logger: " , msg)
 
     def process_error_message(self, msg):
 
         if msg.errorCode == DataType.ERROR_CODE_MARKET_DATA_FARM_CONNECTED:
-            print msg.errorMsg
+            print( msg.errorMsg)
 
         elif msg.errorCode == DataType.ERROR_CODE_HISTORICAL_DATA_FARM_CONNECTED:
-            print msg.errorMsg
+            print( msg.errorMsg)
 
         elif msg.errorCode == DataType.ERROR_CODE_ORDER_CANCELED:
-            print msg.errorMsg
+            print( msg.errorMsg)
 
         else:
-            print "Unhandled errcode: ", msg
+            print( "Unhandled errcode: ", msg)
 
     def process_account_updates(self, msg):
         # Do nothing for now
@@ -178,8 +192,8 @@ class IbHFT:
                     self.positions_dict[stock_code].unrealized_pnl = msg.unrealizedPNL
                     return
 
-        except Exception, e:
-            print "process_portfolio_updates err:", e
+        except Exception as e:
+            print("process_portfolio_updates err:", e)
 
     def get_positions(self):
         return self.positions_dict
@@ -252,10 +266,11 @@ class IbHFT:
                 self.stock_ticks_dict[stock_code].volume = msg.size
 
         else:
-            print "Unhandle tick_event: ", msg
+            print("Unhandle tick_event: ", msg)
 
         if self.on_tick_func is not None:
             self.on_tick_func(self.stock_ticks_dict, stock_code, msg.field)
+
 
     def register_event_handlers(self, ibconn, logger_func=None):
         if logger_func is None:
@@ -263,16 +278,17 @@ class IbHFT:
 
         ibconn.registerAll(logger_func)
         ibconn.unregister(logger_func
-                          , message.tickSize
-                          , message.tickPrice
-                          , message.tickString
-                          , message.tickGeneric
-                          , message.tickOptionComputation
-                          , message.updateAccountTime
-                          , message.accountDownloadEnd
-                          , message.commissionReport)
+                          , EWrapperMsgGenerator.EWrapperMsgGenerator.tickSize
+                          , EWrapperMsgGenerator.EWrapperMsgGenerator.tickPrice
+                          , EWrapperMsgGenerator.EWrapperMsgGenerator.tickString
+                          , EWrapperMsgGenerator.EWrapperMsgGenerator.tickGeneric
+                          , EWrapperMsgGenerator.EWrapperMsgGenerator.tickOptionComputation
+                          , EWrapperMsgGenerator.EWrapperMsgGenerator.updateAccountTime
+                          , EWrapperMsgGenerator.EWrapperMsgGenerator.accountDownloadEnd
+                          , EWrapperMsgGenerator.EWrapperMsgGenerator.commissionReport
+                          )
 
-        ibconn.register(self.tick_event, message.tickPrice, message.tickSize)
+        ibconn.register(self.tick_event, EWrapperMsgGenerator.EWrapperMsgGenerator.tickPrice, EWrapperMsgGenerator.EWrapperMsgGenerator.tickSize)
 
     def request_streaming_data(self, ibconn):
         for i, stock_code in enumerate(self.stock_codes):
@@ -338,12 +354,12 @@ class IbHFT:
             while not self.is_shutdown:
                 time.sleep(1)
 
-        except Exception, e:
-            print "Err: ", e
-            print "Disconnecting..."
+        except Exception as e:
+            print("Err: ", e)
+            print("Disconnecting...")
             self.conn.disconnect()
             time.sleep(1)
-            print "Disconnected."
+            print("Disconnected.")
 
     def assign_functions(self, func_a, func_b):
         self.on_position_changed_func = func_a
@@ -367,15 +383,16 @@ class IbHFT:
             self.request_account_updates(self.conn)
             on_started_func()
 
-        except Exception, e:
-            print "Err: ", e
+        except Exception as e:
+            print("Err: ", e)
 
-            print "Cancelling...",
+            print("Cancelling...", end = ' ')
 
             self.cancel_market_data_request(self.conn)
 
-            print "Disconnecting..."
+            print("Disconnecting...")
             self.disconnect(self.conn)
             time.sleep(1)
 
-            print "Disconnected."
+            print("Disconnected.")
+

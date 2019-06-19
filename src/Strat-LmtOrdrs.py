@@ -9,8 +9,11 @@ Place limit orders just above the bid ask prices.
 Close position when exceed certain thresholds.
 """
 
-import Backtester.Backtester as bt
-from Tkinter import *
+import tkinter
+
+import ipywidgets
+
+from Backtester import *
 import ibHFT
 
 # Fixed params
@@ -41,16 +44,16 @@ class TradingStrategy:
         self.tx_px = self.limit_px = self.loss_px = 0
         self.current_cycle = 0
         self.current_sampling_thread = None
-        self.tk = Tk()
-        self.label_stock = StringVar()
-        self.label_bidask = StringVar()
-        self.label_last = StringVar()
-        self.label_ticks = StringVar()
-        self.label_position = StringVar()
-        self.label_orders = StringVar()
-        self.label_pnl = StringVar()
-        self.label_cycle = StringVar()
-        self.label_traded = StringVar()
+        self.tk = tkinter.Tk()
+        self.label_stock = tkinter.StringVar()
+        self.label_bidask = tkinter.StringVar()
+        self.label_last = tkinter.StringVar()
+        self.label_ticks = tkinter.StringVar()
+        self.label_position = tkinter.StringVar()
+        self.label_orders = tkinter.StringVar()
+        self.label_pnl = tkinter.StringVar()
+        self.label_cycle = tkinter.StringVar()
+        self.label_traded = tkinter.StringVar()
         return
 
     def on_tick(self, ticks, stock_code, field_type):
@@ -164,7 +167,7 @@ class TradingStrategy:
             else:
                 self.current_state = self.STATE_TERMINATED
                 self.tk.quit()
-                print "Cycle completed."
+                print("Cycle completed.")
 
     def is_no_open_orders(self):
         num_open_orders = self.ibhft.get_number_of_pending_orders()
@@ -227,13 +230,13 @@ class TradingStrategy:
             , loss=self.loss_px)
         self.label_traded.set(tradedstr)
 
-    def create_ui(self):
 
+    def create_ui(self):
         def create_row(header, label, row):
-            Label(self.tk, text=header).grid(row=row,column=0)
-            Label(self.tk, textvariable=label).grid(row=row,column=1)
+            tkinter.Label(self.tk, text=header).grid(row=row, column=0)
+            tkinter.Label(self.tk, textvariable=label).grid(row=row, column=1)
             row += 1
-            return row
+            return row_index
 
         row_index = 0
         row_index = create_row("Stock:", self.label_stock, row_index)
@@ -262,13 +265,14 @@ class TradingStrategy:
                                      , self.on_position_changed)
 
     def run_backtest(self):
-        self.ibhft = bt.Backtester()
-        self.ibhft.set_csv_file("ticks 10 mins - Jun 25 2014.csv")
+        self.ibhft = Backtester()
+        self.ibhft.set_csv_file("C:\\Users\\jloss\\PyCharmProjects\\IB-Trading-Models-And-Backtester\\src\\ticks 10 mins - Jun 25 2014.csv")
         self.ibhft.start_data_stream(self.on_started
                                      , self.on_tick
                                      , STOCKS_TO_STREAM
                                      , self.on_position_changed)
 
 if __name__ == '__main__':
-    TradingStrategy().run()
-    # TradingStrategy().run_backtest()
+    # TradingStrategy().run()
+    TradingStrategy().run_backtest()
+

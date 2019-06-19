@@ -36,7 +36,7 @@ class Backtester(IbHFT):
         self.report_backtest_results()
 
     def report_backtest_results(self):
-        print "Back results:"
+        print("Back results:")
 
         position = {k: 0 for k in self.stock_codes}
         pnl = 0
@@ -51,7 +51,7 @@ class Backtester(IbHFT):
             position[stock_code] += qty * (1 if is_buy else -1)
             pnl += mkt_value * (1 if not is_buy else -1) - comm
 
-            print order.filled_time, stock_code, price, "B" if order.is_buy else "S", qty, position[stock_code], pnl
+            print(order.filled_time, stock_code, price, "B" if order.is_buy else "S", qty, position[stock_code], pnl)
 
     def get_commission(self, qty):
         return max(1, self.COST_PER_SHARE*qty)

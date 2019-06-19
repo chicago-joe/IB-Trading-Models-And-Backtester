@@ -9,10 +9,19 @@ Uses OLS to determine order of co-integration every self.window_length.
 Pair-trading by mean-reversion.
 """
 
-import Backtester.Backtester as bt
+import tkinter
+from _tkinter import *
+from Backtester import *
 import pandas as pd
-from pandas.stats.api import ols
-from Tkinter import *
+
+# from statsmodels.api import OLS as ols
+from statsmodels.api import OLS
+import statsmodels.formula.api as smf
+import statsmodels as sm
+
+
+
+import _tkinter as _tk
 import ibHFT
 import threading
 import ibDataTypes
@@ -48,16 +57,16 @@ class TradingStrategy:
         self.current_cycle = 0
         self.current_sampling_thread = None
         self.pd_last_prices = pd.DataFrame()
-        self.tk = Tk()
-        self.label_stock = StringVar()
-        self.label_bidask = StringVar()
-        self.label_last = StringVar()
-        self.label_ticks = StringVar()
-        self.label_position = StringVar()
-        self.label_orders = StringVar()
-        self.label_pnl = StringVar()
-        self.label_zscore = StringVar()
-        self.label_traded = StringVar()
+        self.tk = tkinter.Tk()
+        self.label_stock = tkinter.StringVar()
+        self.label_bidask = tkinter.StringVar()
+        self.label_last = tkinter.StringVar()
+        self.label_ticks = tkinter.StringVar()
+        self.label_position = tkinter.StringVar()
+        self.label_orders = tkinter.StringVar()
+        self.label_pnl = tkinter.StringVar()
+        self.label_zscore = tkinter.StringVar()
+        self.label_traded = tkinter.StringVar()
         self.spreads = []
         self.window_length = 30
         self.is_bootstrapped = False
@@ -87,7 +96,7 @@ class TradingStrategy:
         self.current_ticks = ticks
 
         if not self.is_bootstrapped:
-            print "Bootstrapping...."
+            print("Bootstrapping....")
             return
 
         [stock_code_a, stock_code_b, stock_code_c] = STOCKS_TO_STREAM
@@ -144,11 +153,26 @@ class TradingStrategy:
 
         self.update_ui(zscore)
 
+    from pandas import DataFrame
+
     def get_coeffs_from_ols(self, a, b):
-        slope, intercept = ols(y=a, x=b).beta[['x', 'intercept']]
-        spreads_pair_ab = self.calculate_spread(a, b, slope, intercept)
-        mean, stdev = self.get_mean_and_std(spreads_pair_ab)
-        return slope, intercept, mean, stdev
+        model = OLS(a,b,missing = 'none',hasconst = 'yes').fit()
+        model.summary()
+
+        # [['x', 'intercept']]
+        # sm.tools.add_constant('b')
+        # results = smf.ols('a ~ b').fit()
+        # smf.OLS.fit(self,"pinv",cov_type = )
+        # slope, intercept = OLS(endog=a, exog=b)
+        # ['x','intercept']
+        # result = model.fit()
+        # sm.tools.add_constant[['x', 'intercept']]
+        # self.
+        # slope, intercept = OLS(endog=a, exog=b).fit_regularized[['x','intercept']]
+        # slope, intercept = OLS(
+        # spreads_pair_ab = self.calculate_spread(a, b, slope, intercept)
+        # mean, stdev = self.get_mean_and_std(spreads_pair_ab)
+        # return slope, intercept, mean, stdev
 
     @staticmethod
     def get_mean_and_std(values):
@@ -184,7 +208,7 @@ class TradingStrategy:
             else:
                 self.current_state = self.STATE_TERMINATED
                 self.tk.quit()
-                print "Cycle completed."
+                print("Cycle completed.")
 
     def is_no_open_orders(self):
         num_open_orders = self.ibhft.get_number_of_pending_orders()
@@ -245,8 +269,8 @@ class TradingStrategy:
     def create_ui(self):
 
         def create_row(header, label, row):
-            Label(self.tk, text=header).grid(row=row,column=0)
-            Label(self.tk, textvariable=label).grid(row=row,column=1)
+            tkinter.Label(self.tk, text=header).grid(row=row, column=0)
+            tkinter.Label(self.tk, textvariable=label).grid(row=row, column=1)
             row += 1
             return row
 
@@ -279,13 +303,13 @@ class TradingStrategy:
 
     def run_backtest(self):
         def setup_bootstrap_conditions():
-            self.pd_last_prices = pd.read_csv("ticks 10 mins - Jun 25 2014.csv")
+            self.pd_last_prices = pd.read_csv("C:\\Users\\jloss\\PyCharmProjects\\IB-Trading-Models-And-Backtester\\src\\ticks 10 mins - Jun 25 2014.csv")
             self.pd_last_prices = self.pd_last_prices[-self.window_length:]
             self.is_bootstrapped = True
 
         setup_bootstrap_conditions()
-        self.ibhft = bt.Backtester()
-        self.ibhft.set_csv_file("ticks 10 mins - Jun 25 2014.csv")
+        self.ibhft = Backtester()
+        self.ibhft.set_csv_file("C:\\Users\\jloss\\PyCharmProjects\\IB-Trading-Models-And-Backtester\\src\\ticks 10 mins - Jun 25 2014.csv")
         self.ibhft.start_data_stream(self.on_started
                                      , self.on_tick
                                      , STOCKS_TO_STREAM
